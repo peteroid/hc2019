@@ -111,7 +111,7 @@ class PizzaQuestion(object):
                         result = self.check_pizza_slice(x1, y1, x2, y2)
                         if result:
                             self.mark_pizza_segment(x1, y1, x2, y2, result)
-                            # self.print_pizza_segment()
+                            self.print_pizza_segment()
 
 
 def read_input_file(input_file):
