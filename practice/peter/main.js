@@ -15,28 +15,45 @@ function main () {
   console.log(cells)
 
   // calculate
+  timeStart('main')
   walk(cells, low, high, 0, 0, 1, 1, [])
   while (queue.length > 0) {
     const nextArgs = queue.pop()
     _walk(...nextArgs)
 
     // shortcut if we found the best answer
-    if (result.count === row * col) break
+    // if (result.count === row * col) break
   }
+  timeEnd('main')
+
+  console.log(timeMarks)
 
   console.log(result)
   console.log(`walked: ${walkCount}`)
   console.log(`processed: ${processCount}`)
+
+  console.log('Output:')
+  console.log(result.slices.length)
+  result.slices.forEach(([r, c, row, col]) => console.log(r, c, r + row - 1, c + col - 1))
 }
 
 const queue = []
 let walkCount = 0
 let processCount = 0
 const walked = new Set()
+const labels = new Map()
+
+const timeMarks = {}
+function timeStart (s = '') {
+  timeMarks[s] = (timeMarks[s] || 0) - Date.now()
+}
+function timeEnd (s = '') {
+  timeMarks[s] = (timeMarks[s] || 0) + Date.now()
+}
 
 function walk (pizza = [['']], low = 0, high = 0, r = 0, c = 0, row = 0, col = 0, slices = [[0]], cellCount = 0) {
   walkCount++
-  if (r + row > pizza.length || c + col > pizza[0].length || row * col > high * 2) {
+  if (r + row > pizza.length || c + col > pizza[0].length || row * col > high) {
     return
   }
   queue.push([pizza, low, high, r, c, row, col, slices, cellCount])
@@ -45,6 +62,7 @@ function walk (pizza = [['']], low = 0, high = 0, r = 0, c = 0, row = 0, col = 0
 function _walk (pizza = [['']], low = 0, high = 0, r = 0, c = 0, row = 0, col = 0, slices = [[0]], cellCount = 0) {
   // console.log('work', r, c, row, col, result)
 
+  timeStart('count')
   const counts = { T: 0, M: 0 }
   for (let i = 0; i < row; i++) {
     for (let j = 0; j < col; j++) {
@@ -55,19 +73,48 @@ function _walk (pizza = [['']], low = 0, high = 0, r = 0, c = 0, row = 0, col = 
         counts.M++
       } else {
         // if slice contains taken cell, skip
+        timeEnd('count')
         return
       }
     }
   }
+  timeEnd('count')
 
   // console.log(counts, r, c, row, col)
-  if (counts.T > high || counts.M > high) {
+  if (counts.T + counts.M > high) {
     // the slice has too much topping
     return
   }
 
   // skip for walked label
-  const label = [pizza.map(row => row.join('')).join(''), r, c, row, col].join('_')
+  timeStart('label')
+
+  timeStart('plabel')
+  // let label = ''
+  // for (let i = 0; i < pizza.length; i++) {
+  //   for (let j = 0; j < pizza[0].length; j++) {
+  //     const cell = pizza[i][j]
+  //     label += (cell === 'T' || cell === 'M') ? '.' : '-'
+  //   }
+  // }
+  // label += ('_' + r)
+  // label += ('_' + c)
+  // label += ('_' + row)
+  // label += ('_' + col)
+
+
+  let pizzaLabel = labels.get(pizza)
+  if (!pizzaLabel) {
+    pizzaLabel = pizza.map(row => row.join('')).join('')
+    labels.set(pizza, pizzaLabel)
+  }
+
+  // let pizzaLabel = pizza.map(row => row.join('')).join('')
+  timeEnd('plabel')
+
+  const label = [pizzaLabel, r, c, row, col].join('_')
+
+  timeEnd('label')
   if (walked.has(label)) return
   walked.add(label)
 
@@ -78,6 +125,7 @@ function _walk (pizza = [['']], low = 0, high = 0, r = 0, c = 0, row = 0, col = 
 
   if (counts.T >= low && counts.M >= low) {
     // possible slice, try to expand from here too
+    timeStart('pre-ok')
     const leftover = pizza.map(row => row.slice())
 
     for (let i = 0; i < row; i++) {
@@ -92,7 +140,9 @@ function _walk (pizza = [['']], low = 0, high = 0, r = 0, c = 0, row = 0, col = 
     if (newCellCount > result.count) {
       result.count = newCellCount
       result.slices = newSlices
+      // console.log(result.count)
     }
+    timeEnd('pre-ok')
 
     outer:
     for (let i = 0; i < pizza.length; i++) {
