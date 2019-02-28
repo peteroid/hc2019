@@ -1,2 +1,2 @@
 ### Official round
-> to be announced
+- [Problem](https://hashcodejudge.withgoogle.com/download/blob/AMIfv95YLYPDz-fyE8mjNwjiAPUAZ0ijTcuktGg6j3Yt8UlZL4X9cjwUYE1MY_MZ-7aAtpj0kA4clYMVTB6opQ_bFZdDCAn3wFVpgeOhFV9_CvnWNK4vstcErt_CToSro8GwLACRhFj9eLhF9ldeM780qhw9uxEsKFqvb0aBsXhZM53E-nGBR47m9SqOX1S6znfEh_9Fzt8AP2BtQYqv49dTf9E0zVrtqmrDrbP64yJaHtKw854plP7UTU0OFmhIyqGh4GLCQ-f1OqlCujQKn1DxMUo0xMY1KwMq4FIxV23ZmBDD38fWsoQ)
